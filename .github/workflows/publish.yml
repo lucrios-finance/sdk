@@ -50,8 +50,9 @@ jobs:
         run: |
           NAME=$(node -p "require('./package.json').name")
           CURRENT=$(node -p "require('./package.json').version")
-          PUBLISHED=$(npm view "$NAME" versions --json 2>/dev/null || echo "none")
-          if [ "$PUBLISHED" = "none" ]; then
+          # `npm view` fails for a package that does not exist (and still
+          # prints an error body), so the exit status is what tells.
+          if ! PUBLISHED=$(npm view "$NAME" versions --json 2>/dev/null); then
             # Trusted publishing is configured per package, so the package has
             # to exist first: the very first release is published by hand.
             echo "skip=true" >> "$GITHUB_OUTPUT"
