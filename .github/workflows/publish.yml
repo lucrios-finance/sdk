@@ -1,17 +1,16 @@
 name: Publish
 
-# Publishes to npm when a version tag is pushed:
-#
-#   npm version patch        # bumps package.json and creates the tag
-#   git push --follow-tags
+# Publishes to npm on every push to main whose package.json version is not on
+# the registry yet. To release: bump the version (`npm version patch`), merge
+# to main. A push that does not change the version publishes nothing.
 #
 # Authentication is npm trusted publishing (OIDC): there is no npm token in
 # this repository. The package's settings on npmjs.com must list this
-# repository and this workflow file as a trusted publisher.
+# repository and this workflow file (publish.yml) as a trusted publisher.
 
 on:
   push:
-    tags: ["v*"]
+    branches: [main]
 
 concurrency:
   group: publish
@@ -19,11 +18,11 @@ concurrency:
 
 permissions:
   contents: read
-  id-token: write
+  id-token: write # OIDC for trusted publishing and provenance
 
 jobs:
   publish:
-    name: Publish to npm
+    name: npm publish
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -34,18 +33,40 @@ jobs:
           cache: npm
           registry-url: https://registry.npmjs.org
 
-      # Trusted publishing needs npm 11.5.1 or newer; Node 22 ships npm 10.
-      - run: npm install -g npm@latest
+      - name: Install dependencies
+        run: npm ci
 
-      # A tag that disagrees with package.json would publish a version nobody
-      # asked for.
-      - name: Tag matches package.json
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Check if version already published
+        id: version_check
         run: |
-          version="v$(node -p "require('./package.json').version")"
-          [ "$version" = "$GITHUB_REF_NAME" ] \
-            || { echo "::error::tag $GITHUB_REF_NAME does not match package.json ($version)"; exit 1; }
+          NAME=$(node -p "require('./package.json').name")
+          CURRENT=$(node -p "require('./package.json').version")
+          PUBLISHED=$(npm view "$NAME" versions --json 2>/dev/null || echo "none")
+          if [ "$PUBLISHED" = "none" ]; then
+            # Trusted publishing is configured per package, so the package has
+            # to exist first: the very first release is published by hand.
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::$NAME is not on npm yet — the first release is published manually."
+          elif echo "$PUBLISHED" | grep -q "\"$CURRENT\""; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Version $CURRENT already published — skipping."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "Publishing $CURRENT"
+          fi
 
-      - run: npm ci
-
-      # `prepublishOnly` runs typecheck, tests and build before the upload.
-      - run: npm publish
+      # Trusted publishing needs npm 11.5.1 or newer; Node 22 ships npm 10.
+      - name: Publish to npm
+        if: steps.version_check.outputs.skip == 'false'
+        run: |
+          npm install -g npm@latest
+          npm publish --access public --provenance --ignore-scripts
