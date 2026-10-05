@@ -1,0 +1,51 @@
+name: Publish
+
+# Publishes to npm when a version tag is pushed:
+#
+#   npm version patch        # bumps package.json and creates the tag
+#   git push --follow-tags
+#
+# Authentication is npm trusted publishing (OIDC): there is no npm token in
+# this repository. The package's settings on npmjs.com must list this
+# repository and this workflow file as a trusted publisher.
+
+on:
+  push:
+    tags: ["v*"]
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      # Trusted publishing needs npm 11.5.1 or newer; Node 22 ships npm 10.
+      - run: npm install -g npm@latest
+
+      # A tag that disagrees with package.json would publish a version nobody
+      # asked for.
+      - name: Tag matches package.json
+        run: |
+          version="v$(node -p "require('./package.json').version")"
+          [ "$version" = "$GITHUB_REF_NAME" ] \
+            || { echo "::error::tag $GITHUB_REF_NAME does not match package.json ($version)"; exit 1; }
+
+      - run: npm ci
+
+      # `prepublishOnly` runs typecheck, tests and build before the upload.
+      - run: npm publish

@@ -28,6 +28,9 @@
     "dist",
     "LICENSE"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "sideEffects": false,
   "engines": {
     "node": ">=18"
@@ -36,7 +39,8 @@
     "build": "tsup src/index.ts --format esm,cjs --dts --clean",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "sync-abis": "node scripts/sync-abis.mjs"
+    "sync-abis": "node scripts/sync-abis.mjs",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build"
   },
   "peerDependencies": {
     "viem": "^2.21.0"
