@@ -56,17 +56,23 @@ export class Http {
     const payload = parseJson(text);
 
     if (!response.ok) {
-      const error = (payload ?? {}) as { code?: unknown; message?: unknown };
+      const error = isRecord(payload) ? payload : {};
+      const { code, message, ...details } = error;
       throw new ApiError(
         response.status,
-        typeof error.code === "string" ? error.code : `HTTP_${response.status}`,
-        typeof error.message === "string" ? error.message : text || response.statusText,
+        typeof code === "string" ? code : `HTTP_${response.status}`,
+        typeof message === "string" ? message : text || response.statusText,
         response.status === 429 || response.status >= 500,
+        details,
       );
     }
 
     return payload as T;
   }
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function parseJson(text: string): unknown {

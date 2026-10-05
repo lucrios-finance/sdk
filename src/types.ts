@@ -119,7 +119,7 @@ export interface Position {
 
 export interface Credits {
   token_id: number;
-  /** Credit balance in ETH. Negative = the instance opens no new position. */
+  /** Credit balance in ETH. Zero or negative = the instance opens no new position. */
   balance_eth: string;
 }
 
@@ -129,6 +129,8 @@ export interface PaperStatement {
   gross_profit: string;
   execution_costs: string;
   ai_credits: string;
+  /** API usage fees actually debited (one per executed order), in USD. */
+  api_fees: string;
   net_result: string;
 }
 

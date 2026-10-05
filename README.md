@@ -110,12 +110,36 @@ Every failed request throws one of two errors:
 
 | Error | When | Fields |
 |---|---|---|
-| `ApiError` | the API answered with an error | `status`, `code`, `message`, `retryable` |
+| `ApiError` | the API answered with an error | `status`, `code`, `message`, `retryable`, `details` |
 | `NetworkError` | no response at all | `retryable` (always true) |
 
 `code` is stable and meant to be branched on (`UNAUTHORIZED`, `FORBIDDEN`,
-`NOT_FOUND`, `INVALID`, `CONFLICT`, `INTERNAL`). `retryable` is true only when
-sending the same request again can succeed without changing it.
+`NOT_FOUND`, `INVALID`, `CONFLICT`, `INSUFFICIENT_CREDITS`, `INTERNAL`).
+`retryable` is true only when sending the same request again can succeed
+without changing it.
+
+### Out of credits
+
+Every instance has a prepaid credit balance. It pays for the platform AI, for
+gas and for API usage: each order your system sends **and the engine executes**
+costs a small fixed fee. Rejected and expired orders, and all reads, are free.
+
+When the balance is zero or negative, an order to **enter** is refused with
+HTTP 402 and the code `INSUFFICIENT_CREDITS`. An order to **exit** is always
+accepted, so an open position can always be closed.
+
+```ts
+try {
+  await bots.placeOrder(signer, intent);
+} catch (error) {
+  if (error instanceof ApiError && error.isInsufficientCredits) {
+    // Not retryable: top up the instance first (ContractTransactions.topUp).
+    console.log("balance:", error.details.balance_eth, "ETH");
+  } else {
+    throw error;
+  }
+}
+```
 
 ## Conventions
 

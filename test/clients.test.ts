@@ -185,6 +185,30 @@ describe("errors", () => {
     await expect(client.getInstance(1)).rejects.toMatchObject({ code: "HTTP_429", retryable: true });
   });
 
+  it("exposes the balance when an order is refused for lack of credits", async () => {
+    const { client } = bots([
+      {
+        status: 402,
+        body: {
+          code: "INSUFFICIENT_CREDITS",
+          message: "the instance has no credits; top up to open new positions",
+          balance_eth: "-0.0012",
+        },
+      },
+      { status: 409, body: { code: "CONFLICT", message: "nope" } },
+    ]);
+
+    const error = await client.getOrder(1, "x").catch((e) => e);
+
+    expect(error).toBeInstanceOf(ApiError);
+    expect(error).toMatchObject({ status: 402, retryable: false, isInsufficientCredits: true });
+    expect(error.details).toEqual({ balance_eth: "-0.0012" });
+
+    const other = await client.getOrder(1, "x").catch((e) => e);
+    expect(other.isInsufficientCredits).toBe(false);
+    expect(other.details).toEqual({});
+  });
+
   it("reports a failed connection as a retryable NetworkError", async () => {
     const { client } = bots([new TypeError("fetch failed")], "t");
 

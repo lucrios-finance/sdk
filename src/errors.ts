@@ -16,8 +16,21 @@ export class ApiError extends Error {
     message: string,
     /** True for rate limits and server-side failures. */
     readonly retryable: boolean,
+    /**
+     * Extra fields the API sent with the error. `INSUFFICIENT_CREDITS` carries
+     * `balance_eth`, the current credit balance as a decimal string.
+     */
+    readonly details: Readonly<Record<string, unknown>> = {},
   ) {
     super(message);
+  }
+
+  /**
+   * The instance is out of credits: the order was not accepted and sending it
+   * again will not help until the instance is topped up.
+   */
+  get isInsufficientCredits(): boolean {
+    return this.code === "INSUFFICIENT_CREDITS";
   }
 }
 
