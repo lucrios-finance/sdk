@@ -43,6 +43,12 @@ export interface Market {
   /** Logo of each token of the pair, when a source has one. */
   base_logo_url: string | null;
   quote_logo_url: string | null;
+  /** When the pool was created on-chain, where known (Uniswap v4 pools). */
+  pool_created_block: number | null;
+  pool_created_at: string | null;
+  /** First swap of the pool seen by the indexer. */
+  first_swap_block: number | null;
+  first_swap_at: string | null;
   /** Liquidity and 24h volume in USD, as last seen. Decimal strings. */
   liquidity_usd: string | null;
   volume_24h_usd: string | null;
