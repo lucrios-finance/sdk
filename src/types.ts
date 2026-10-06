@@ -10,24 +10,42 @@ export type Hex = `0x${string}`;
 // ── market data ─────────────────────────────────────────────────────────────
 
 export type Interval = "1m" | "5m" | "15m" | "1h" | "4h" | "1d";
-export type DexKind = "uniswap_v3" | "uniswap_v4";
+/**
+ * Where a pool stands in its lifecycle. Only `tracked` markets have candles
+ * being recorded and are returned by the market list.
+ */
+export type MarketStatus = "discovered" | "tracked" | "dormant" | "removed" | "blocked";
 
 export interface Market {
   id: string;
   /** e.g. `WETH/USDG`. Every price of the market is "quote per 1 base". */
   symbol: string;
-  dex: DexKind;
+  /** Name of the DEX the pool belongs to, e.g. `uniswap-v3-robinhood`. */
+  dex: string;
+  /** Pool address, or the 32-byte pool id for Uniswap v4 pools. */
   pool_address: string;
   pool_id: string | null;
   base_token: string;
   quote_token: string;
   base_decimals: number;
   quote_decimals: number;
-  base_is_token0: boolean;
+  base_is_token0: boolean | null;
   usd_via_market_id: string | null;
-  start_block: number;
+  start_block: number | null;
+  /** True exactly when `status` is `tracked`. */
   enabled: boolean;
   created_at: string;
+  status: MarketStatus;
+  /** Kept tracked regardless of activity. */
+  pinned: boolean;
+  block_reason: string | null;
+  /** Liquidity and 24h volume in USD, as last seen. Decimal strings. */
+  liquidity_usd: string | null;
+  volume_24h_usd: string | null;
+  first_seen_at: string;
+  last_seen_at: string | null;
+  last_active_at: string | null;
+  status_changed_at: string;
 }
 
 export interface Candle {
