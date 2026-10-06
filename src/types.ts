@@ -9,7 +9,8 @@ export type Hex = `0x${string}`;
 
 // ── market data ─────────────────────────────────────────────────────────────
 
-export type Interval = "1m" | "5m" | "15m" | "1h" | "4h" | "1d";
+/** Candle windows. All are aligned to midnight UTC (6h starts at 00, 06, 12 and 18). */
+export type Interval = "1m" | "5m" | "15m" | "30m" | "1h" | "4h" | "6h" | "1d";
 /**
  * Where a pool stands in its lifecycle. Only `tracked` markets have candles
  * being recorded and are returned by the market list.
