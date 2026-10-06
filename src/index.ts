@@ -2,7 +2,7 @@ export { ApiError, NetworkError } from "./errors.js";
 export type { FetchLike, HttpOptions } from "./http.js";
 
 export { DataClient } from "./data.js";
-export type { CandleQuery } from "./data.js";
+export type { CandleQuery, PoolQuery } from "./data.js";
 
 export { BotsClient } from "./bots.js";
 export type { BotsClientOptions, MarketConfig } from "./bots.js";

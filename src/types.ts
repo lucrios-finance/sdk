@@ -79,6 +79,56 @@ export interface LastPrice {
   block_time: string;
 }
 
+/** What a pool listing is ordered by. */
+export type PoolSort =
+  | "volume"
+  | "price"
+  | "change_1h"
+  | "change_24h"
+  | "liquidity"
+  | "trades"
+  | "age";
+
+/**
+ * A pool in the listing: who it is and its last 24 hours. Its `id` is a
+ * market id — candles and the live price are read with it.
+ */
+export interface Pool {
+  id: string;
+  symbol: string;
+  dex: string;
+  pool_address: string;
+  base_token: string;
+  quote_token: string;
+  status: MarketStatus;
+  base_logo_url: string | null;
+  quote_logo_url: string | null;
+  pool_created_at: string | null;
+  first_swap_at: string | null;
+  /** Quote per 1 base. */
+  price: string;
+  /** Null when the quote token has no known path to the dollar. */
+  price_usd: string | null;
+  /** Fraction, not percent: `0.25` is +25%. Null without trades in the window. */
+  change_1h: string | null;
+  change_24h: string | null;
+  /** In quote token. */
+  volume_24h: string;
+  volume_24h_usd: string | null;
+  trades_24h: number;
+  /** Null for pools no provider has measured yet. */
+  liquidity_usd: string | null;
+  updated_at: string;
+}
+
+export interface PoolPage {
+  pools: Pool[];
+  page: number;
+  per_page: number;
+  /** Pools matching the filter, across every page. */
+  total: number;
+}
+
 export interface CandleSeries {
   market_id: string;
   symbol: string;

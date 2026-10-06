@@ -1,5 +1,5 @@
 import { Http, type HttpOptions } from "./http.js";
-import type { CandleSeries, Interval, LastPrice, Market } from "./types.js";
+import type { CandleSeries, Interval, LastPrice, Market, PoolPage, PoolSort } from "./types.js";
 
 export interface CandleQuery {
   /** Defaults to `1m`. */
@@ -14,6 +14,21 @@ export interface CandleQuery {
   fill?: boolean;
 }
 
+export interface PoolQuery {
+  /** Defaults to `volume`. */
+  sort?: PoolSort;
+  /** Defaults to `desc`. Pools without the sorted value come last either way. */
+  order?: "asc" | "desc";
+  /** Starts at 1. */
+  page?: number;
+  /** 1 to 100. Defaults to 25. */
+  perPage?: number;
+  /** Part of the symbol, or exactly a token address, the pool address or the market id. */
+  search?: string;
+  minVolumeUsd?: number | string;
+  minLiquidityUsd?: number | string;
+}
+
 /** Client for the public market-data API: markets and OHLC candles. */
 export class DataClient {
   private readonly http: Http;
@@ -26,6 +41,25 @@ export class DataClient {
   async listMarkets(): Promise<Market[]> {
     const { markets } = await this.http.request<{ markets: Market[] }>("/markets");
     return markets;
+  }
+
+  /**
+   * Every pool the indexer has seen trading, one page at a time, with the
+   * numbers of its last 24 hours. Wider than `listMarkets`, which only has
+   * the markets the bots trade.
+   */
+  listPools(query: PoolQuery = {}): Promise<PoolPage> {
+    return this.http.request<PoolPage>("/pools", {
+      query: {
+        sort: query.sort,
+        order: query.order,
+        page: query.page,
+        per_page: query.perPage,
+        q: query.search?.trim() || undefined,
+        min_volume_usd: query.minVolumeUsd,
+        min_liquidity_usd: query.minLiquidityUsd,
+      },
+    });
   }
 
   /**

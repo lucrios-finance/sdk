@@ -274,6 +274,28 @@ describe("DataClient live price", () => {
     // A market with no indexed swap yet has no live price.
     await expect(data.getLastPrice("m-2")).rejects.toMatchObject({ status: 404, code: "NOT_FOUND" });
   });
+
+  it("lists pools with sorting, paging and search", async () => {
+    const page = { pools: [{ id: "m-1", symbol: "MEME/WETH", change_24h: "-0.5" }], page: 2, per_page: 10, total: 31 };
+    const { fetch, calls } = fakeFetch([{ body: page }, { body: { ...page, page: 1 } }]);
+    const data = new DataClient({ baseUrl: "https://data.example", fetch });
+
+    const got = await data.listPools({ sort: "change_24h", order: "asc", page: 2, perPage: 10, search: " weth " });
+    expect(got.total).toBe(31);
+    expect(got.pools[0]!.symbol).toBe("MEME/WETH");
+    expect(calls[0]!.url.pathname).toBe("/pools");
+    expect(Object.fromEntries(calls[0]!.url.searchParams)).toEqual({
+      sort: "change_24h",
+      order: "asc",
+      page: "2",
+      per_page: "10",
+      q: "weth",
+    });
+
+    // Nothing asked: the API's own defaults apply.
+    await data.listPools({ search: "  " });
+    expect(calls[1]!.url.search).toBe("");
+  });
 });
 
 describe("signerFromWalletClient", () => {
