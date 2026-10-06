@@ -1,7 +1,7 @@
 import { decodeFunctionData, erc20Abi, maxUint256, zeroAddress } from "viem";
 import { describe, expect, it } from "vitest";
 
-import { ContractTransactions, botInstanceNftAbi, tradeExecutorAbi } from "../src/index.js";
+import { ContractTransactions, botInstanceNftAbi, pairKey, tradeExecutorAbi } from "../src/index.js";
 
 const nft = "0x1111111111111111111111111111111111111111";
 const executor = "0x2222222222222222222222222222222222222222";
@@ -10,6 +10,18 @@ const pool = "0x4444444444444444444444444444444444444444";
 const token = "0x5555555555555555555555555555555555555555";
 
 const txs = new ContractTransactions({ nft, executor });
+
+describe("pairKey", () => {
+  it("matches the key the executor contract derives", () => {
+    // Reference value from the contract's own formula:
+    // address(uint160(uint256(keccak256(abi.encode(base, quote))))).
+    const base = "0xd0601CE157Db5bdC3162BbaC2a2C8aF5320D9EEC";
+    const quote = "0x5fc5360d0400a0fd4f2af552add042d716f1d168";
+
+    expect(pairKey(base, quote)).toBe("0xa9b5590ec294da640537fd0fecd49e363e6210fe");
+    expect(pairKey(quote, base)).not.toBe(pairKey(base, quote));
+  });
+});
 
 describe("ContractTransactions", () => {
   it("mint sends the price to the NFT contract, with or without a partner", () => {

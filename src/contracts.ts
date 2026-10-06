@@ -1,4 +1,4 @@
-import { encodeFunctionData, erc20Abi, maxUint256, zeroAddress } from "viem";
+import { encodeAbiParameters, encodeFunctionData, erc20Abi, keccak256, maxUint256, zeroAddress } from "viem";
 
 import { botInstanceNftAbi } from "./abis/botInstanceNft.js";
 import { tradeExecutorAbi } from "./abis/tradeExecutor.js";
@@ -20,6 +20,17 @@ export interface UnsignedTransaction {
   data: Hex;
   /** Wei to send along. */
   value: bigint;
+}
+
+/**
+ * Key of a pair traded through the aggregator. The executor uses it where a
+ * directly traded market uses its pool address, so this is what an owner
+ * passes to {@link ContractTransactions.setMarketAllowed} to allow the pair.
+ * The order matters: `base` is the asset, `quote` what it is priced in.
+ */
+export function pairKey(base: Address, quote: Address): Address {
+  const hash = keccak256(encodeAbiParameters([{ type: "address" }, { type: "address" }], [base, quote]));
+  return `0x${hash.slice(-40)}`;
 }
 
 function partner(feeRecipient: Address | undefined): Address {
@@ -90,7 +101,11 @@ export class ContractTransactions {
     };
   }
 
-  /** Allows or forbids the instance to trade in a market (identified by its pool). */
+  /**
+   * Allows or forbids the instance to trade in a market. `pool` is the pool
+   * address for a directly traded market, or {@link pairKey} for a pair traded
+   * through the aggregator.
+   */
   setMarketAllowed(tokenId: bigint, pool: Address, allowed: boolean): UnsignedTransaction {
     return {
       to: this.addresses.executor,

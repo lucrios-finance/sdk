@@ -21,7 +21,7 @@ export type { OrderIntent, SignedOrder } from "./orders.js";
 export { signerFromAccount, signerFromWalletClient } from "./signer.js";
 export type { OrderTypedData, Signer, ViemAccountLike, ViemWalletClientLike } from "./signer.js";
 
-export { ContractTransactions } from "./contracts.js";
+export { ContractTransactions, pairKey } from "./contracts.js";
 export type { ContractAddresses, UnsignedTransaction } from "./contracts.js";
 
 export { botInstanceNftAbi } from "./abis/botInstanceNft.js";
