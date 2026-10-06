@@ -40,6 +40,9 @@ export interface Market {
   /** Kept tracked regardless of activity. */
   pinned: boolean;
   block_reason: string | null;
+  /** Logo of each token of the pair, when a source has one. */
+  base_logo_url: string | null;
+  quote_logo_url: string | null;
   /** Liquidity and 24h volume in USD, as last seen. Decimal strings. */
   liquidity_usd: string | null;
   volume_24h_usd: string | null;
