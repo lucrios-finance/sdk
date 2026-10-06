@@ -27,6 +27,9 @@ export interface PoolQuery {
   search?: string;
   minVolumeUsd?: number | string;
   minLiquidityUsd?: number | string;
+  minHolders?: number;
+  /** Minimum holders gained in 24 hours. May be negative. */
+  minHoldersChange?: number;
 }
 
 /** Client for the public market-data API: markets and OHLC candles. */
@@ -58,6 +61,8 @@ export class DataClient {
         q: query.search?.trim() || undefined,
         min_volume_usd: query.minVolumeUsd,
         min_liquidity_usd: query.minLiquidityUsd,
+        min_holders: query.minHolders,
+        min_holders_change: query.minHoldersChange,
       },
     });
   }

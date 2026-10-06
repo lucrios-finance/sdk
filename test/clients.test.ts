@@ -277,7 +277,7 @@ describe("DataClient live price", () => {
 
   it("lists pools with sorting, paging and search", async () => {
     const page = { pools: [{ id: "m-1", symbol: "MEME/WETH", change_24h: "-0.5" }], page: 2, per_page: 10, total: 31 };
-    const { fetch, calls } = fakeFetch([{ body: page }, { body: { ...page, page: 1 } }]);
+    const { fetch, calls } = fakeFetch([{ body: page }, { body: page }, { body: { ...page, page: 1 } }]);
     const data = new DataClient({ baseUrl: "https://data.example", fetch });
 
     const got = await data.listPools({ sort: "change_24h", order: "asc", page: 2, perPage: 10, search: " weth " });
@@ -292,9 +292,16 @@ describe("DataClient live price", () => {
       q: "weth",
     });
 
+    await data.listPools({ sort: "holders_change", minHolders: 100, minHoldersChange: -5 });
+    expect(Object.fromEntries(calls[1]!.url.searchParams)).toEqual({
+      sort: "holders_change",
+      min_holders: "100",
+      min_holders_change: "-5",
+    });
+
     // Nothing asked: the API's own defaults apply.
     await data.listPools({ search: "  " });
-    expect(calls[1]!.url.search).toBe("");
+    expect(calls[2]!.url.search).toBe("");
   });
 });
 

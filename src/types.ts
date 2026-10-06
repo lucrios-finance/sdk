@@ -87,6 +87,8 @@ export type PoolSort =
   | "change_24h"
   | "liquidity"
   | "trades"
+  | "holders"
+  | "holders_change"
   | "age";
 
 /**
@@ -118,6 +120,13 @@ export interface Pool {
   trades_24h: number;
   /** Null for pools no provider has measured yet. */
   liquidity_usd: string | null;
+  /**
+   * Holders of the base token. Only counted for tokens whose main pool is
+   * active enough; null for the others and until the first full count.
+   */
+  holders: number | null;
+  /** Holders gained (or lost) in 24 hours. Null without a count that old. */
+  holders_change_24h: number | null;
   updated_at: string;
 }
 
