@@ -1,5 +1,5 @@
 import { Http, type HttpOptions } from "./http.js";
-import type { CandleSeries, Interval, Market } from "./types.js";
+import type { CandleSeries, Interval, LastPrice, Market } from "./types.js";
 
 export interface CandleQuery {
   /** Defaults to `1m`. */
@@ -43,6 +43,15 @@ export class DataClient {
         fill: query.fill,
       },
     });
+  }
+
+  /**
+   * Price of the latest swap of the market, with the block it happened in.
+   * Updated block by block; candles only close once a minute. Fails with
+   * `NOT_FOUND` while the market has no indexed swap yet.
+   */
+  getLastPrice(marketId: string): Promise<LastPrice> {
+    return this.http.request<LastPrice>(`/markets/${marketId}/price`);
   }
 }
 

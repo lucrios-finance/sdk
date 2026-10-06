@@ -252,6 +252,30 @@ describe("DataClient", () => {
   });
 });
 
+describe("DataClient live price", () => {
+  it("reads the last price of a market", async () => {
+    const { fetch, calls } = fakeFetch([
+      {
+        body: {
+          market_id: "m-1",
+          price: "2704.25",
+          block_number: 81442141,
+          block_time: "2026-10-06T07:06:16Z",
+        },
+      },
+      { status: 404, body: { code: "NOT_FOUND", message: "not found" } },
+    ]);
+    const data = new DataClient({ baseUrl: "https://data.example", fetch });
+
+    const price = await data.getLastPrice("m-1");
+    expect(price).toMatchObject({ price: "2704.25", block_number: 81442141 });
+    expect(calls[0]!.url.pathname).toBe("/markets/m-1/price");
+
+    // A market with no indexed swap yet has no live price.
+    await expect(data.getLastPrice("m-2")).rejects.toMatchObject({ status: 404, code: "NOT_FOUND" });
+  });
+});
+
 describe("signerFromWalletClient", () => {
   it("passes the account on every call and needs one to exist", async () => {
     const seen: unknown[] = [];

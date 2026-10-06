@@ -69,6 +69,16 @@ export interface Candle {
   volume: string;
 }
 
+/** Price of the latest swap of a market: the live price between candle closes. */
+export interface LastPrice {
+  market_id: string;
+  /** Quote per 1 base. */
+  price: string;
+  /** Block of the swap that set this price. */
+  block_number: number;
+  block_time: string;
+}
+
 export interface CandleSeries {
   market_id: string;
   symbol: string;
