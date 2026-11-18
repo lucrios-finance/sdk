@@ -164,6 +164,20 @@ export class ContractTransactions {
   }
 
   /**
+   * Chooses one address that may trade this instance besides the Lucrios
+   * operator — your own system, for instance. It opens and closes positions
+   * from the vault under the same on-chain limits, pays its own gas and always
+   * pays the full volume fee. While a signer is set, the Lucrios engine stops
+   * trading the instance. `null` revokes. A buyer of the NFT does not inherit
+   * the signer.
+   */
+  setSigner(tokenId: bigint, signer: Address | null): UnsignedTransaction {
+    return this.executorCall(
+      encodeFunctionData({ abi: tradeExecutorAbi, functionName: "setSigner", args: [tokenId, signer ?? zeroAddress] }),
+    );
+  }
+
+  /**
    * Drops the record of an open position without selling: the asset stays in
    * the vault and stops being managed by the bot. No fee is charged.
    */

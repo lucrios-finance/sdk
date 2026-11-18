@@ -78,6 +78,8 @@ describe("ContractTransactions", () => {
         args: [7n, 0n, true, true],
       },
       { tx: txs.setMarketAllowed(7n, pool, true), functionName: "setMarketAllowed", args: [7n, pool, true] },
+      { tx: txs.setSigner(7n, partner), functionName: "setSigner", args: [7n, partner] },
+      { tx: txs.setSigner(7n, null), functionName: "setSigner", args: [7n, zeroAddress] },
       { tx: txs.dropPosition(7n, pool), functionName: "dropPosition", args: [7n, pool] },
       { tx: txs.dropRange(7n, 42n), functionName: "dropRange", args: [7n, 42n] },
       { tx: txs.withdrawFees(token), functionName: "withdraw", args: [token] },
