@@ -110,6 +110,9 @@ await walletClient.sendTransaction(txs.setLimits(tokenId, { maxPerTrade: parseEt
 await walletClient.sendTransaction(txs.setMarketAllowed(tokenId, poolOrPairKey, true));
 // or every market at once: txs.setLimits(tokenId, { maxPerTrade, anyMarket: true })
 
+// optional: let your own system trade it (the Lucrios engine then steps aside)
+await walletClient.sendTransaction(txs.setSigner(tokenId, MY_BOT_ADDRESS));
+
 // later, back to the owner's wallet:
 await walletClient.sendTransaction(vault.withdraw(WETH_ADDRESS)); // the whole balance
 ```
