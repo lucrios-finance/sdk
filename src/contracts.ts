@@ -99,9 +99,10 @@ export class ContractTransactions {
 
   /**
    * Mints a bot instance paying in ETH. `price` must be at least the current
-   * mint price (read `paymentTokens(address(0))` on the NFT contract); any
-   * excess is refunded by the contract. `feeRecipient` attributes the mint to
-   * a partner.
+   * mint price (read `ethMintPrice()` on the NFT contract). The price may be
+   * set in dollars and follow ETH between the read and the inclusion, so
+   * send a small margin: any excess is refunded by the contract.
+   * `feeRecipient` attributes the mint to a partner.
    */
   mint(price: bigint, feeRecipient?: Address): UnsignedTransaction {
     return {
