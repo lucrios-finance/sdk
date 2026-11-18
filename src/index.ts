@@ -21,10 +21,14 @@ export type { OrderIntent, SignedOrder } from "./orders.js";
 export { signerFromAccount, signerFromWalletClient } from "./signer.js";
 export type { OrderTypedData, Signer, ViemAccountLike, ViemWalletClientLike } from "./signer.js";
 
-export { ContractTransactions, pairKey } from "./contracts.js";
-export type { ContractAddresses, UnsignedTransaction } from "./contracts.js";
+export { ContractTransactions, VaultTransactions, pairKey, vaultAddress } from "./contracts.js";
+export type { ContractAddresses, InstanceLimits, UnsignedTransaction } from "./contracts.js";
+
+export { canonicalJson, decisionHash } from "./decision.js";
+export type { DecisionRecord } from "./decision.js";
 
 export { botInstanceNftAbi } from "./abis/botInstanceNft.js";
+export { instanceVaultAbi } from "./abis/instanceVault.js";
 export { tradeExecutorAbi } from "./abis/tradeExecutor.js";
 
 export type * from "./types.js";

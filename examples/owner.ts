@@ -8,6 +8,7 @@ import {
   ContractTransactions,
   DataClient,
   signerFromWalletClient,
+  vaultAddress,
 } from "../src/index.js";
 
 declare const window: { ethereum: Parameters<typeof custom>[0] };
@@ -39,15 +40,22 @@ export async function ownerFlow(tokenId: number) {
   const statement = await bots.getStatement(tokenId);
   console.log(`net result so far: ${statement.net_result}`);
 
-  // 4. Going live needs these transactions, signed by the owner's wallet.
-  const txs = new ContractTransactions({ nft: "0x…", executor: "0x…" });
+  // 4. Going live: the instance trades with the funds in its own vault, which
+  //    only the NFT owner can withdraw from. These transactions are signed by
+  //    the owner's wallet.
+  const executor = "0x…" as const;
+  const txs = new ContractTransactions({ nft: "0x…", executor });
+  // Fixed for the executor's life: read `vaultImplementation()` on it once.
+  const vault = txs.vault(vaultAddress(executor, "0x…", BigInt(tokenId)));
   const onboarding = [
-    txs.setLimits(BigInt(tokenId), parseEther("1000")),
+    vault.depositNative(parseEther("0.5")), // the bot wraps it into WETH
+    txs.setLimits(BigInt(tokenId), { maxPerTrade: parseEther("0.1") }),
     txs.setMarketAllowed(BigInt(tokenId), market.pool_address as `0x${string}`, true),
-    txs.approveToken(market.quote_token as `0x${string}`),
-    txs.approveToken(market.base_token as `0x${string}`),
   ];
   for (const tx of onboarding) {
     await wallet.sendTransaction({ ...tx, account: address!, chain: null });
   }
+
+  // Any time later, everything back to the owner's wallet:
+  //   await wallet.sendTransaction({ ...vault.withdraw(WETH), account: address!, chain: null });
 }

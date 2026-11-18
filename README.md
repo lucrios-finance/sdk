@@ -19,7 +19,9 @@ npm install @lucrios/sdk viem
 | `DataClient` | list markets and read OHLC candles |
 | `BotsClient` | log in with a wallet, configure an instance, read positions, credits and the test-mode statement, delegate an agent key, send orders |
 | `signOrder`, `orderTypedData` | sign an order (EIP-712) with any wallet |
-| `ContractTransactions` | build the unsigned transactions for mint, top-up, limits, approvals, copy trade and withdrawals |
+| `ContractTransactions` | build the unsigned transactions for mint, top-up, the vault (deposit, withdraw), limits and allowed markets |
+| `vaultAddress` | the address of an instance's vault, without a network call |
+| `decisionHash` | check that an on-chain trade matches the published decision of the agent |
 | `signerFromAccount`, `signerFromWalletClient` | adapt a viem account or wallet client |
 
 ## An instance owner
@@ -88,21 +90,50 @@ Full version in [`examples/agent.ts`](examples/agent.ts).
 ## On-chain transactions
 
 The SDK never signs or sends a transaction. `ContractTransactions` returns
-`{ to, data, value }` for the owner's wallet to sign:
+`{ to, data, value }` for the owner's wallet to sign.
+
+Each instance trades with the funds in its own **vault**, a contract tied to
+the NFT. The current NFT owner can withdraw everything from it at any time, and
+nothing in the executor can block that; the executor only moves funds to trade,
+within the owner's limits, and the result goes back to the vault. Transferring
+the NFT transfers the vault.
 
 ```ts
-import { ContractTransactions } from "@lucrios/sdk";
+import { ContractTransactions, vaultAddress } from "@lucrios/sdk";
 
 const txs = new ContractTransactions({ nft: NFT_ADDRESS, executor: EXECUTOR_ADDRESS });
+// VAULT_IMPLEMENTATION is the executor's `vaultImplementation()`, fixed for its life.
+const vault = txs.vault(vaultAddress(EXECUTOR_ADDRESS, VAULT_IMPLEMENTATION, tokenId));
 
-await walletClient.sendTransaction(txs.mint(mintPrice, partnerAddress));
-await walletClient.sendTransaction(txs.setLimits(tokenId, maxPerTrade));
-await walletClient.sendTransaction(txs.approveToken(quoteToken));
-await walletClient.sendTransaction(txs.approveToken(baseToken)); // without it a stop cannot be executed
+await walletClient.sendTransaction(vault.depositNative(parseEther("0.5"))); // wrapped into WETH by the bot
+await walletClient.sendTransaction(txs.setLimits(tokenId, { maxPerTrade: parseEther("0.1") }));
+await walletClient.sendTransaction(txs.setMarketAllowed(tokenId, poolOrPairKey, true));
+// or every market at once: txs.setLimits(tokenId, { maxPerTrade, anyMarket: true })
+
+// later, back to the owner's wallet:
+await walletClient.sendTransaction(vault.withdraw(WETH_ADDRESS)); // the whole balance
 ```
 
-The contract ABIs are exported as `botInstanceNftAbi` and `tradeExecutorAbi`
-for reads and event decoding.
+The vault can be funded before it exists: its address is fixed by the token
+id. A market traded through the aggregator is identified by `pairKey(base,
+quote)` instead of a pool address.
+
+### Checking a decision
+
+The AI does not run on-chain. Every entry and exit from a vault carries, in the
+`decision` field of the executor's `PositionOpened` / `PositionClosed` event,
+the hash of the decision record the agent published. To check one:
+
+```ts
+import { parseEventLogs } from "viem";
+import { decisionHash, tradeExecutorAbi } from "@lucrios/sdk";
+
+const [event] = parseEventLogs({ abi: tradeExecutorAbi, logs: receipt.logs, eventName: "PositionOpened" });
+decisionHash(publishedRecord) === event.args.decision; // true when the trade matches the record
+```
+
+The contract ABIs are exported as `botInstanceNftAbi`, `tradeExecutorAbi` and
+`instanceVaultAbi` for reads and event decoding.
 
 ## Errors
 

@@ -223,6 +223,24 @@ export const botInstanceNftAbi = [
   },
   {
     "type": "function",
+    "name": "mintTo",
+    "inputs": [
+      {
+        "name": "to",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "mintWithToken",
     "inputs": [
       {
@@ -244,6 +262,19 @@ export const botInstanceNftAbi = [
       }
     ],
     "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "minter",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -462,6 +493,19 @@ export const botInstanceNftAbi = [
         "name": "newMaxSupply",
         "type": "uint256",
         "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setMinter",
+    "inputs": [
+      {
+        "name": "newMinter",
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "outputs": [],
@@ -869,6 +913,19 @@ export const botInstanceNftAbi = [
   },
   {
     "type": "event",
+    "name": "MinterSet",
+    "inputs": [
+      {
+        "name": "minter",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "OperatorSet",
     "inputs": [
       {
@@ -1224,6 +1281,11 @@ export const botInstanceNftAbi = [
   },
   {
     "type": "error",
+    "name": "NotMinter",
+    "inputs": []
+  },
+  {
+    "type": "error",
     "name": "NothingToWithdraw",
     "inputs": []
   },
@@ -1280,6 +1342,17 @@ export const botInstanceNftAbi = [
     "type": "error",
     "name": "SoldOut",
     "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "TokenIdTaken",
+    "inputs": [
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ]
   },
   {
     "type": "error",
