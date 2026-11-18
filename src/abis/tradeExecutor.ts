@@ -14,6 +14,11 @@ export const tradeExecutorAbi = [
         "internalType": "contract IERC721"
       },
       {
+        "name": "weth_",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
         "name": "operator_",
         "type": "address",
         "internalType": "address"
@@ -24,12 +29,7 @@ export const tradeExecutorAbi = [
         "internalType": "address"
       },
       {
-        "name": "profitFeeBps_",
-        "type": "uint16",
-        "internalType": "uint16"
-      },
-      {
-        "name": "leaderFeeBps_",
+        "name": "volumeFeeBps_",
         "type": "uint16",
         "internalType": "uint16"
       }
@@ -64,34 +64,16 @@ export const tradeExecutorAbi = [
   },
   {
     "type": "function",
-    "name": "MAX_TOTAL_FEE_BPS",
+    "name": "MAX_VOLUME_FEE_BPS",
     "inputs": [],
     "outputs": [
       {
         "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
+        "type": "uint16",
+        "internalType": "uint16"
       }
     ],
     "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "abandonPosition",
-    "inputs": [
-      {
-        "name": "tokenId",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "pool",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
@@ -158,19 +140,74 @@ export const tradeExecutorAbi = [
         "internalType": "address"
       },
       {
-        "name": "feeRecipients",
-        "type": "address[]",
-        "internalType": "address[]"
-      },
-      {
         "name": "minQuoteOut",
         "type": "uint256",
         "internalType": "uint256"
       },
       {
+        "name": "feeBps",
+        "type": "uint16",
+        "internalType": "uint16"
+      },
+      {
         "name": "deadline",
         "type": "uint256",
         "internalType": "uint256"
+      },
+      {
+        "name": "decision",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "closeRange",
+    "inputs": [
+      {
+        "name": "p",
+        "type": "tuple",
+        "internalType": "struct TradeExecutor.RangeClose",
+        "components": [
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "nftId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "amount0Min",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "amount1Min",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "feeBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "deadline",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "decision",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ]
       }
     ],
     "outputs": [],
@@ -203,19 +240,24 @@ export const tradeExecutorAbi = [
         ]
       },
       {
-        "name": "feeRecipients",
-        "type": "address[]",
-        "internalType": "address[]"
-      },
-      {
         "name": "minQuoteOut",
         "type": "uint256",
         "internalType": "uint256"
       },
       {
+        "name": "feeBps",
+        "type": "uint16",
+        "internalType": "uint16"
+      },
+      {
         "name": "deadline",
         "type": "uint256",
         "internalType": "uint256"
+      },
+      {
+        "name": "decision",
+        "type": "bytes32",
+        "internalType": "bytes32"
       },
       {
         "name": "route",
@@ -240,25 +282,7 @@ export const tradeExecutorAbi = [
   },
   {
     "type": "function",
-    "name": "follow",
-    "inputs": [
-      {
-        "name": "tokenId",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "leader",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "following",
+    "name": "createVault",
     "inputs": [
       {
         "name": "tokenId",
@@ -268,21 +292,52 @@ export const tradeExecutorAbi = [
     ],
     "outputs": [
       {
-        "name": "leader",
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "dropPosition",
+    "inputs": [
+      {
+        "name": "tokenId",
         "type": "uint256",
         "internalType": "uint256"
       },
       {
-        "name": "feeBps",
-        "type": "uint16",
-        "internalType": "uint16"
+        "name": "market",
+        "type": "address",
+        "internalType": "address"
       }
     ],
-    "stateMutability": "view"
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
-    "name": "isLocked",
+    "name": "dropRange",
+    "inputs": [
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "nftId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "feeExempt",
     "inputs": [
       {
         "name": "tokenId",
@@ -295,19 +350,6 @@ export const tradeExecutorAbi = [
         "name": "",
         "type": "bool",
         "internalType": "bool"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "leaderFeeBps",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint16",
-        "internalType": "uint16"
       }
     ],
     "stateMutability": "view"
@@ -330,6 +372,11 @@ export const tradeExecutorAbi = [
       },
       {
         "name": "paused",
+        "type": "bool",
+        "internalType": "bool"
+      },
+      {
+        "name": "anyMarket",
         "type": "bool",
         "internalType": "bool"
       }
@@ -359,7 +406,7 @@ export const tradeExecutorAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "pool",
+        "name": "market",
         "type": "address",
         "internalType": "address"
       }
@@ -427,25 +474,6 @@ export const tradeExecutorAbi = [
   },
   {
     "type": "function",
-    "name": "openCount",
-    "inputs": [
-      {
-        "name": "tokenId",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "openPositions",
     "inputs": [
       {
@@ -469,12 +497,108 @@ export const tradeExecutorAbi = [
         "internalType": "uint256"
       },
       {
+        "name": "feeBps",
+        "type": "uint16",
+        "internalType": "uint16"
+      },
+      {
         "name": "deadline",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "decision",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "openRange",
+    "inputs": [
+      {
+        "name": "p",
+        "type": "tuple",
+        "internalType": "struct TradeExecutor.RangeOpen",
+        "components": [
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "manager",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "pool",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "quote",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "tickLower",
+            "type": "int24",
+            "internalType": "int24"
+          },
+          {
+            "name": "tickUpper",
+            "type": "int24",
+            "internalType": "int24"
+          },
+          {
+            "name": "amount0",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "amount1",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "amount0Min",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "amount1Min",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "feeBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "deadline",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "decision",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          }
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "name": "nftId",
         "type": "uint256",
         "internalType": "uint256"
       }
     ],
-    "outputs": [],
     "stateMutability": "nonpayable"
   },
   {
@@ -514,9 +638,19 @@ export const tradeExecutorAbi = [
         "internalType": "uint256"
       },
       {
+        "name": "feeBps",
+        "type": "uint16",
+        "internalType": "uint16"
+      },
+      {
         "name": "deadline",
         "type": "uint256",
         "internalType": "uint256"
+      },
+      {
+        "name": "decision",
+        "type": "bytes32",
+        "internalType": "bytes32"
       },
       {
         "name": "route",
@@ -615,25 +749,6 @@ export const tradeExecutorAbi = [
   },
   {
     "type": "function",
-    "name": "partnerProfitShareBps",
-    "inputs": [
-      {
-        "name": "partner",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint16",
-        "internalType": "uint16"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "pendingOwner",
     "inputs": [],
     "outputs": [
@@ -647,29 +762,44 @@ export const tradeExecutorAbi = [
   },
   {
     "type": "function",
-    "name": "pnl",
+    "name": "positionVenues",
     "inputs": [
       {
-        "name": "tokenId",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "quote",
+        "name": "manager",
         "type": "address",
         "internalType": "address"
       }
     ],
     "outputs": [
       {
-        "name": "cumulative",
-        "type": "int256",
-        "internalType": "int256"
+        "name": "factory",
+        "type": "address",
+        "internalType": "address"
       },
       {
-        "name": "highWaterMark",
-        "type": "int256",
-        "internalType": "int256"
+        "name": "adapter",
+        "type": "address",
+        "internalType": "contract IV3PositionAdapter"
+      },
+      {
+        "name": "enabled",
+        "type": "bool",
+        "internalType": "bool"
+      },
+      {
+        "name": "feeExempt",
+        "type": "bool",
+        "internalType": "bool"
+      },
+      {
+        "name": "twapWindow",
+        "type": "uint32",
+        "internalType": "uint32"
+      },
+      {
+        "name": "maxTickDeviation",
+        "type": "uint24",
+        "internalType": "uint24"
       }
     ],
     "stateMutability": "view"
@@ -684,7 +814,7 @@ export const tradeExecutorAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "pool",
+        "name": "market",
         "type": "address",
         "internalType": "address"
       }
@@ -705,19 +835,6 @@ export const tradeExecutorAbi = [
   },
   {
     "type": "function",
-    "name": "profitFeeBps",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint16",
-        "internalType": "uint16"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "quoteTokens",
     "inputs": [
       {
@@ -731,6 +848,50 @@ export const tradeExecutorAbi = [
         "name": "",
         "type": "bool",
         "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "ranges",
+    "inputs": [
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "nftId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "manager",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "pool",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "base",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "quote",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "liquidity",
+        "type": "uint128",
+        "internalType": "uint128"
       }
     ],
     "stateMutability": "view"
@@ -781,17 +942,17 @@ export const tradeExecutorAbi = [
   },
   {
     "type": "function",
-    "name": "setFees",
+    "name": "setFeeExempt",
     "inputs": [
       {
-        "name": "newProfitFeeBps",
-        "type": "uint16",
-        "internalType": "uint16"
+        "name": "tokenId",
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
-        "name": "newLeaderFeeBps",
-        "type": "uint16",
-        "internalType": "uint16"
+        "name": "exempt",
+        "type": "bool",
+        "internalType": "bool"
       }
     ],
     "outputs": [],
@@ -813,6 +974,11 @@ export const tradeExecutorAbi = [
       },
       {
         "name": "paused",
+        "type": "bool",
+        "internalType": "bool"
+      },
+      {
+        "name": "anyMarket",
         "type": "bool",
         "internalType": "bool"
       }
@@ -881,7 +1047,7 @@ export const tradeExecutorAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "pool",
+        "name": "market",
         "type": "address",
         "internalType": "address"
       },
@@ -932,17 +1098,49 @@ export const tradeExecutorAbi = [
   },
   {
     "type": "function",
-    "name": "setPartnerProfitShare",
+    "name": "setPositionVenue",
     "inputs": [
       {
-        "name": "partner",
+        "name": "manager",
         "type": "address",
         "internalType": "address"
       },
       {
-        "name": "shareBps",
-        "type": "uint16",
-        "internalType": "uint16"
+        "name": "venue",
+        "type": "tuple",
+        "internalType": "struct TradeExecutor.PositionVenue",
+        "components": [
+          {
+            "name": "factory",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "adapter",
+            "type": "address",
+            "internalType": "contract IV3PositionAdapter"
+          },
+          {
+            "name": "enabled",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "feeExempt",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "twapWindow",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "maxTickDeviation",
+            "type": "uint24",
+            "internalType": "uint24"
+          }
+        ]
       }
     ],
     "outputs": [],
@@ -981,6 +1179,19 @@ export const tradeExecutorAbi = [
   },
   {
     "type": "function",
+    "name": "setVolumeFee",
+    "inputs": [
+      {
+        "name": "newVolumeFeeBps",
+        "type": "uint16",
+        "internalType": "uint16"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "transferOwnership",
     "inputs": [
       {
@@ -1007,19 +1218,6 @@ export const tradeExecutorAbi = [
   },
   {
     "type": "function",
-    "name": "unfollow",
-    "inputs": [
-      {
-        "name": "tokenId",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
     "name": "uniswapV3SwapCallback",
     "inputs": [
       {
@@ -1043,6 +1241,64 @@ export const tradeExecutorAbi = [
   },
   {
     "type": "function",
+    "name": "vaultImplementation",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "vaultOf",
+    "inputs": [
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "volumeFeeBps",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint16",
+        "internalType": "uint16"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "weth",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "withdraw",
     "inputs": [
       {
@@ -1058,6 +1314,19 @@ export const tradeExecutorAbi = [
         "internalType": "uint256"
       }
     ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "wrapNative",
+    "inputs": [
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
     "stateMutability": "nonpayable"
   },
   {
@@ -1081,26 +1350,7 @@ export const tradeExecutorAbi = [
   },
   {
     "type": "event",
-    "name": "FeesSet",
-    "inputs": [
-      {
-        "name": "profitFeeBps",
-        "type": "uint16",
-        "indexed": false,
-        "internalType": "uint16"
-      },
-      {
-        "name": "leaderFeeBps",
-        "type": "uint16",
-        "indexed": false,
-        "internalType": "uint16"
-      }
-    ],
-    "anonymous": false
-  },
-  {
-    "type": "event",
-    "name": "Followed",
+    "name": "FeeExemptSet",
     "inputs": [
       {
         "name": "tokenId",
@@ -1109,16 +1359,10 @@ export const tradeExecutorAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "leader",
-        "type": "uint256",
-        "indexed": true,
-        "internalType": "uint256"
-      },
-      {
-        "name": "feeBps",
-        "type": "uint16",
+        "name": "exempt",
+        "type": "bool",
         "indexed": false,
-        "internalType": "uint16"
+        "internalType": "bool"
       }
     ],
     "anonymous": false
@@ -1175,6 +1419,12 @@ export const tradeExecutorAbi = [
         "type": "bool",
         "indexed": false,
         "internalType": "bool"
+      },
+      {
+        "name": "anyMarket",
+        "type": "bool",
+        "indexed": false,
+        "internalType": "bool"
       }
     ],
     "anonymous": false
@@ -1203,7 +1453,7 @@ export const tradeExecutorAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "pool",
+        "name": "market",
         "type": "address",
         "indexed": true,
         "internalType": "address"
@@ -1332,26 +1582,7 @@ export const tradeExecutorAbi = [
   },
   {
     "type": "event",
-    "name": "PartnerProfitShareSet",
-    "inputs": [
-      {
-        "name": "partner",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      },
-      {
-        "name": "shareBps",
-        "type": "uint16",
-        "indexed": false,
-        "internalType": "uint16"
-      }
-    ],
-    "anonymous": false
-  },
-  {
-    "type": "event",
-    "name": "PositionAbandoned",
+    "name": "PositionClosed",
     "inputs": [
       {
         "name": "tokenId",
@@ -1360,7 +1591,56 @@ export const tradeExecutorAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "pool",
+        "name": "market",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "baseIn",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "quoteOut",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "fee",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "pnl",
+        "type": "int256",
+        "indexed": false,
+        "internalType": "int256"
+      },
+      {
+        "name": "decision",
+        "type": "bytes32",
+        "indexed": false,
+        "internalType": "bytes32"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "PositionDropped",
+    "inputs": [
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "market",
         "type": "address",
         "indexed": true,
         "internalType": "address"
@@ -1382,67 +1662,6 @@ export const tradeExecutorAbi = [
   },
   {
     "type": "event",
-    "name": "PositionClosed",
-    "inputs": [
-      {
-        "name": "tokenId",
-        "type": "uint256",
-        "indexed": true,
-        "internalType": "uint256"
-      },
-      {
-        "name": "pool",
-        "type": "address",
-        "indexed": true,
-        "internalType": "address"
-      },
-      {
-        "name": "baseIn",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
-      },
-      {
-        "name": "quoteOut",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
-      },
-      {
-        "name": "pnl",
-        "type": "int256",
-        "indexed": false,
-        "internalType": "int256"
-      },
-      {
-        "name": "protocolFee",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
-      },
-      {
-        "name": "partnerFee",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
-      },
-      {
-        "name": "leaderFee",
-        "type": "uint256",
-        "indexed": false,
-        "internalType": "uint256"
-      },
-      {
-        "name": "feeRecipient",
-        "type": "address",
-        "indexed": false,
-        "internalType": "address"
-      }
-    ],
-    "anonymous": false
-  },
-  {
-    "type": "event",
     "name": "PositionOpened",
     "inputs": [
       {
@@ -1452,7 +1671,7 @@ export const tradeExecutorAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "pool",
+        "name": "market",
         "type": "address",
         "indexed": true,
         "internalType": "address"
@@ -1464,10 +1683,71 @@ export const tradeExecutorAbi = [
         "internalType": "uint256"
       },
       {
+        "name": "fee",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
         "name": "baseOut",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
+      },
+      {
+        "name": "decision",
+        "type": "bytes32",
+        "indexed": false,
+        "internalType": "bytes32"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "PositionVenueSet",
+    "inputs": [
+      {
+        "name": "manager",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "factory",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "adapter",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "enabled",
+        "type": "bool",
+        "indexed": false,
+        "internalType": "bool"
+      },
+      {
+        "name": "feeExempt",
+        "type": "bool",
+        "indexed": false,
+        "internalType": "bool"
+      },
+      {
+        "name": "twapWindow",
+        "type": "uint32",
+        "indexed": false,
+        "internalType": "uint32"
+      },
+      {
+        "name": "maxTickDeviation",
+        "type": "uint24",
+        "indexed": false,
+        "internalType": "uint24"
       }
     ],
     "anonymous": false
@@ -1493,6 +1773,141 @@ export const tradeExecutorAbi = [
   },
   {
     "type": "event",
+    "name": "RangeClosed",
+    "inputs": [
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "manager",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "nftId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "baseOut",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "quoteOut",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "fee",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "decision",
+        "type": "bytes32",
+        "indexed": false,
+        "internalType": "bytes32"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "RangeDropped",
+    "inputs": [
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "manager",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "nftId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "RangeOpened",
+    "inputs": [
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "manager",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "nftId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "pool",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "liquidity",
+        "type": "uint128",
+        "indexed": false,
+        "internalType": "uint128"
+      },
+      {
+        "name": "amount0",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "amount1",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "fee",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "decision",
+        "type": "bytes32",
+        "indexed": false,
+        "internalType": "bytes32"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "TreasurySet",
     "inputs": [
       {
@@ -1506,13 +1921,32 @@ export const tradeExecutorAbi = [
   },
   {
     "type": "event",
-    "name": "Unfollowed",
+    "name": "VaultCreated",
     "inputs": [
       {
         "name": "tokenId",
         "type": "uint256",
         "indexed": true,
         "internalType": "uint256"
+      },
+      {
+        "name": "vault",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "VolumeFeeSet",
+    "inputs": [
+      {
+        "name": "volumeFeeBps",
+        "type": "uint16",
+        "indexed": false,
+        "internalType": "uint16"
       }
     ],
     "anonymous": false
@@ -1532,6 +1966,25 @@ export const tradeExecutorAbi = [
         "type": "address",
         "indexed": true,
         "internalType": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Wrapped",
+    "inputs": [
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
       },
       {
         "name": "amount",
@@ -1575,7 +2028,28 @@ export const tradeExecutorAbi = [
   },
   {
     "type": "error",
-    "name": "HasOpenPositions",
+    "name": "FailedDeployment",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "FeeTooHigh",
+    "inputs": [
+      {
+        "name": "feeBps",
+        "type": "uint16",
+        "internalType": "uint16"
+      },
+      {
+        "name": "maxBps",
+        "type": "uint16",
+        "internalType": "uint16"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "InstancePaused",
     "inputs": [
       {
         "name": "tokenId",
@@ -1586,10 +2060,15 @@ export const tradeExecutorAbi = [
   },
   {
     "type": "error",
-    "name": "InstancePaused",
+    "name": "InsufficientBalance",
     "inputs": [
       {
-        "name": "tokenId",
+        "name": "balance",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "needed",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -1613,28 +2092,17 @@ export const tradeExecutorAbi = [
   },
   {
     "type": "error",
-    "name": "InvalidFees",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "InvalidLeader",
-    "inputs": [
-      {
-        "name": "leader",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ]
-  },
-  {
-    "type": "error",
     "name": "InvalidMarket",
     "inputs": []
   },
   {
     "type": "error",
     "name": "InvalidPair",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidRange",
     "inputs": []
   },
   {
@@ -1663,7 +2131,7 @@ export const tradeExecutorAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "pool",
+        "name": "market",
         "type": "address",
         "internalType": "address"
       }
@@ -1679,9 +2147,25 @@ export const tradeExecutorAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "pool",
+        "name": "market",
         "type": "address",
         "internalType": "address"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "NoRange",
+    "inputs": [
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "nftId",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ]
   },
@@ -1759,7 +2243,7 @@ export const tradeExecutorAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "pool",
+        "name": "market",
         "type": "address",
         "internalType": "address"
       }
@@ -1767,7 +2251,7 @@ export const tradeExecutorAbi = [
   },
   {
     "type": "error",
-    "name": "PositionStillClosable",
+    "name": "PositionStillHeld",
     "inputs": [
       {
         "name": "tokenId",
@@ -1775,7 +2259,7 @@ export const tradeExecutorAbi = [
         "internalType": "uint256"
       },
       {
-        "name": "pool",
+        "name": "market",
         "type": "address",
         "internalType": "address"
       }
@@ -1810,6 +2294,49 @@ export const tradeExecutorAbi = [
   },
   {
     "type": "error",
+    "name": "RangeNotInVault",
+    "inputs": [
+      {
+        "name": "nftId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "RangePriceDeviation",
+    "inputs": [
+      {
+        "name": "spot",
+        "type": "int24",
+        "internalType": "int24"
+      },
+      {
+        "name": "mean",
+        "type": "int24",
+        "internalType": "int24"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "RangeStillHeld",
+    "inputs": [
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "nftId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ]
+  },
+  {
+    "type": "error",
     "name": "ReentrancyGuardReentrantCall",
     "inputs": []
   },
@@ -1833,6 +2360,17 @@ export const tradeExecutorAbi = [
     "type": "error",
     "name": "T",
     "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "VenueDisabled",
+    "inputs": [
+      {
+        "name": "manager",
+        "type": "address",
+        "internalType": "address"
+      }
+    ]
   },
   {
     "type": "error",

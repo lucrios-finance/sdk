@@ -14,6 +14,7 @@ const target = join(here, "..", "src", "abis");
 const contracts = [
   { name: "BotInstanceNFT", file: "botInstanceNft", symbol: "botInstanceNftAbi" },
   { name: "TradeExecutor", file: "tradeExecutor", symbol: "tradeExecutorAbi" },
+  { name: "InstanceVault", file: "instanceVault", symbol: "instanceVaultAbi" },
 ];
 
 for (const { name, file, symbol } of contracts) {

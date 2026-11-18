@@ -1,6 +1,6 @@
 {
   "name": "@lucrios/sdk",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "TypeScript SDK for the Lucrios trading bots: market data, instances, signed orders and contract transactions.",
   "license": "MIT",
   "homepage": "https://lucrios.finance",
