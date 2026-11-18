@@ -67,6 +67,19 @@ export const botInstanceNftAbi = [
   },
   {
     "type": "function",
+    "name": "MIN_TWAP_WINDOW",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint32",
+        "internalType": "uint32"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "acceptOwnership",
     "inputs": [],
     "outputs": [],
@@ -127,6 +140,19 @@ export const botInstanceNftAbi = [
     "outputs": [
       {
         "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "ethMintPrice",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "price",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -603,6 +629,56 @@ export const botInstanceNftAbi = [
   },
   {
     "type": "function",
+    "name": "setUsdPricing",
+    "inputs": [
+      {
+        "name": "pricing",
+        "type": "tuple",
+        "internalType": "struct BotInstanceNFT.UsdPricing",
+        "components": [
+          {
+            "name": "pool",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "usd",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "weth",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "window",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "usdPrice",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "minWei",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "maxWei",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "supportsInterface",
     "inputs": [
       {
@@ -769,6 +845,49 @@ export const botInstanceNftAbi = [
         "name": "",
         "type": "address",
         "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "usdPricing",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "pool",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "usd",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "weth",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "window",
+        "type": "uint32",
+        "internalType": "uint32"
+      },
+      {
+        "name": "usdPrice",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "minWei",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "maxWei",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "stateMutability": "view"
@@ -1121,6 +1240,55 @@ export const botInstanceNftAbi = [
   },
   {
     "type": "event",
+    "name": "UsdPricingSet",
+    "inputs": [
+      {
+        "name": "pool",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "usd",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "weth",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "window",
+        "type": "uint32",
+        "indexed": false,
+        "internalType": "uint32"
+      },
+      {
+        "name": "usdPrice",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "minWei",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "maxWei",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "Withdrawn",
     "inputs": [
       {
@@ -1262,6 +1430,11 @@ export const botInstanceNftAbi = [
         "internalType": "uint256"
       }
     ]
+  },
+  {
+    "type": "error",
+    "name": "InvalidUsdPricing",
+    "inputs": []
   },
   {
     "type": "error",
